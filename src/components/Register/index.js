@@ -53,18 +53,6 @@ class Register extends React.PureComponent {
         }
     }
 
-    componentDidUpdate(nextprops) {
-        console.log(nextprops.user.success,this.props.user.succes)
-        if(this.props.user.success !== nextprops.user.success && this.props.user.succes) {
-            this.setState({
-                name: '',
-                email: '',
-                password: '',
-                avatarImage: ''
-            })
-        }
-    }
-
     render() {
         const {
             name,

@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components'
 import Avatar from '../Avatar'
+import PropTypes from 'prop-types'
+
 
 const PlayerWrapper = styled.div`
     display: flex;
@@ -50,29 +52,26 @@ const HealthBar = styled.div`
     }
 `
 
-class Player extends React.PureComponent {
+const Player = (props) => {
+    return (
+        <PlayerWrapper>
+            <div className="player">
+                <Avatar accountType={props.playerName} avatar={props.avatarImage} />
+                <span className="player-name">{props.playerName}</span>
+            </div>
+            <HealthBarWrapper>
+                <HealthBar health={Number(props.health)}>
+                    <span>{props.health}%</span>
+                </HealthBar>
+            </HealthBarWrapper>
+        </PlayerWrapper>
+    )
+}
 
-    render() {
-        const {
-            playerName,
-            health,
-            avatarImage
-        } = this.props
-
-        return (
-            <PlayerWrapper>
-                <div className="player">
-                    <Avatar accountType={playerName} avatar={avatarImage} />
-                    <span className="player-name">{playerName}</span>
-                </div>
-                <HealthBarWrapper>
-                    <HealthBar health={Number(health)}>
-                        <span>{health}%</span>
-                    </HealthBar>
-                </HealthBarWrapper>
-            </PlayerWrapper>
-        )
-    }
+Player.propTypes = {
+    playerName: PropTypes.string,
+    health: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    avatarImage: PropTypes.string
 }
 
 export default Player;
