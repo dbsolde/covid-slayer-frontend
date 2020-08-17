@@ -25,18 +25,18 @@ const PaginationItem = styled.li`
     }
     &.active {
         button {
-            background: #007bff;
+            background: ${props => props.theme.colors.primary.background};
         }
     }
     &.disabled {
         opacity: .5;
         button:hover {
-            background: #c8ced3;
+            background: ${props => props.theme.colors.steam};
         }
     }
 `;
 const PageLink = styled.button`
-    background: #c8ced3;
+    background: ${props => props.theme.colors.steam};
     border: none;
     padding:  ${props => props.mobile ? '5px 8px':'0.5rem 0.75rem'} ;
     line-height: 1.25;

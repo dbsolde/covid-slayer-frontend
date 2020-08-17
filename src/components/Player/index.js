@@ -27,7 +27,7 @@ const HealthBarWrapper = styled.div`
     margin-top: 20px;
     position: relative;
     width: 100%;
-    background: #eee;
+    background: ${props => props.theme.colors.screechingWite};
 
 `
 const HealthBar = styled.div`

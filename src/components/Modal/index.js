@@ -11,7 +11,7 @@ const ModalOverlay = styled.div`
     bottom: 0;
     left: 0;
     z-index: 1040;
-    background-color: #000;
+    background-color: ${props => props.theme.colors.black};
       
     &.fade {
         filter: alpha(opacity=0);
@@ -27,12 +27,15 @@ const ModalOverlay = styled.div`
 const ModalDialog = styled.div`
     position: relative;
     width: 500px;
+    @media only screen and (max-width: 992px) { 
+        width: 90%;
+    }
     margin: 10px auto;
 `
 
 const ModalContent = styled.div`
     position: relative;
-    background: #ffffff !important;
+    background: ${props => props.theme.colors.white} !important;
     background-clip: padding-box;
     border: 0;
     border-radius: 6px;
@@ -55,11 +58,11 @@ const ModalWrapper = styled.div`
     }
     
     .modal-header {
-        border-bottom: 1px solid #c8ced3;
+        border-bottom: 1px solid ${props => props.theme.colors.black};
         padding: 5px 10px;
         .modal-title {
             span {
-                color: #8F0D0D;
+                color: ${props => props.theme.colors.black};
                 font-size: 24px;
                 font-weight: 800;
             }
@@ -68,22 +71,22 @@ const ModalWrapper = styled.div`
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        background: #FFFFFF !important;
+        background: ${props => props.theme.colors.white} !important;
         border-top-left-radius: .3rem;
         border-top-right-radius: .3rem;
-        color: #000000;
+        color: ${props => props.theme.colors.black};
 
         span {
             &.default {
-                background: #8F0D0D;
+                background: ${props => props.theme.colors.black};
             }
             border: none;
             font-size: 2em;
         }
         .close {
             margin-top: -2px;
-            color: #8F0D0D;
-            background: #FFFFFF !important;
+            color: ${props => props.theme.colors.black};
+            background: ${props => props.theme.colors.white} !important;
             cursor: pointer;
         }
     }

@@ -46,6 +46,10 @@ export default createGlobalStyle`
             justify-content: center;
             text-align: center;
             align-items: flex-end;
+            
+            &.column {
+                align-items: center;
+            }
         }
         &.space-between {
             justify-content: space-between;

@@ -2,7 +2,7 @@ import axios from 'axios'
 import { removeLocalStorage } from '../utils/localStorage'
 
 const API_ROOT = process.env.NODE_ENV === 'development' 
-    ? 'http://localhost:4000' 
+    ? 'https://covid-slayer-api.herokuapp.com' 
     : 'https://covid-slayer-api.herokuapp.com'
 
 const createAPI = (token,type) => {

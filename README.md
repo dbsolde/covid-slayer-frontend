@@ -1,7 +1,6 @@
 
 # Covid Slayer Front End
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Front End Stack
 
@@ -21,7 +20,7 @@ Logout (/logout)
 Register (/register)
 Dashbard (/)
 Game (/game)
-Game History (/game-history)
+Game History (/game/histories/:page/:pageSize)
 ```
 
 ## Installation
@@ -31,15 +30,10 @@ Game History (/game-history)
 $ git clone https://github.com/dbsolde/covid-slayer-frontend.git
 
 # go into app directory
-$ cd comm-computation
+$ cd covid-slayer-frontend
 
 # install app dependencies
-
-# For npm
-$ npm i
-
-# For yarn
-$ yarn
+$ npm i or yarn
 ```
 
 ## Basic usage
@@ -49,13 +43,32 @@ $ yarn
 # To start
 $ npm start
 
-# To test
-$ npm test
+#local
+The app will load to localhost:3000
+
+#Production is deployed to netlify
+https://angry-stonebraker-63f062.netlify.app
+
+# Note: on local development please make sure to start the covid-slayer-api first
 
 ```
 
-## TODO
+
+## Front End tasks summary
 ```bash
+User can signup 
+User can login
+User cannot view dashboard, game histories or play game if not authenticated or token expired
+User can view game histories
+Log all action events in game and limit to latest 10 records
+Configurable game time
+Remember user
+One source for app theme
+Responsive web app
+```
+
+```bash
+# Front End outstanding tasks
 Unit Test
 Dockerized game
 ```

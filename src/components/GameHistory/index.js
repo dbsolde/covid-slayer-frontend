@@ -38,11 +38,11 @@ const Table = styled.table`
         }
     }
     tbody tr:nth-child(odd) {
-        background: #ddd;
+        background: ${props => props.theme.colors.steam};
     }
     
     tbody tr:nth-child(even) {
-        background: #eee;
+        background: ${props => props.theme.colors.screechingWite};
     }
 `
 
@@ -105,7 +105,7 @@ class GameHistory extends React.PureComponent {
                         </Table>
                     }
                     {/* Pagination */}
-                    {!history.loading && history.data && history.data.pages > 1&&
+                    {!history.loading && history.data && history.data.pages > 1 &&
                         <Pagination 
                             mobile={window.screen.width >= 1024 ? false : true}
                             data={history.data} 

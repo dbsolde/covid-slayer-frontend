@@ -1,10 +1,11 @@
-
+import covidMonsterImg from '../assets/monster.jpg'
+const path = 'https://covid-slayer-api.herokuapp.com/uploads'
 const initialState = {
     gameTime: 60, // Game time 60secs by default
     opponent: {
         opponentHealth: 100,
         opponentName: 'Covid Monster',
-        avatar: '/static/media/monster.7907a800.jpg'
+        avatar: covidMonsterImg
     }, // Opponent default health and name
     player: {
         playerHealth: 100,
@@ -28,7 +29,7 @@ const gameReducer = (state = initialState, action) => {
                 player: {
                     ...state.player,
                     playerName: action.payload.user.name,
-                    avatar: `https://covid-slayer-api.herokuapp.com/uploads/${action.payload.user.avatarImage}`
+                    avatar: `${path}/${action.payload.user.avatarImage}`
                 }
             }
         case 'START_GAME':

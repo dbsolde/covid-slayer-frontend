@@ -21,7 +21,7 @@ const Container = styled.div`
     }
     .formwrapper {
         padding: 3.125em;
-        background: #FFFFFF;
+        background: ${props => props.theme.colors.white};
         border-radius: 0.625em;
     }
 `

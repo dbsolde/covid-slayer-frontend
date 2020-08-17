@@ -45,7 +45,9 @@ const colors = {
     opponentHealthBar: '',
     white: '#FFFFFF',
     black: '#000000',
-    error: '#fa3a3a'
+    error: '#fa3a3a',
+    screechingWite: '#EEEEEE',
+    steam: '#dddddd'
 }
 
 export const theme = {

@@ -35,7 +35,7 @@ const Content = styled.div`
             height: 255px;
             overflow: auto;
             li {
-                background: #ddd;
+                background: ${props => props.theme.colors.steam};
                 padding: 3px;
                 margin-bottom: 2px;
             }
