@@ -6,15 +6,18 @@ import Player from '../Player'
 import Button from '../Button';
 import { withRouter } from 'react-router-dom';
 import {
-    playerGive,
+    playerGiveUp,
     startGame,
     actionAttack,
     actionHeal,
-    actionSetWinner
+    actionSetWinner,
+    resetGame,
+    saveGame
 } from '../../actions/games'
 import { showModal, hideModal } from '../../actions/modal'
 import Modal from '../Modal'
 import { randomNum } from '../../utils/utils'
+import Commentary from '../Commentary'
 
 const Content = styled.div`
     display: flex;
@@ -29,8 +32,8 @@ const Content = styled.div`
             list-style: none;
             margin: 0;
             padding: 0;
-            height: 220px;
-            overflow-y: scroll;
+            height: 255px;
+            overflow: auto;
             li {
                 background: #ddd;
                 padding: 3px;
@@ -58,27 +61,66 @@ const Content = styled.div`
 
 class Game extends React.PureComponent {
 
-    state = {
-        confirmLeave: false
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            confirmLeave: false,
+            seconds: 0
+        }
     }
+    
 
     componentDidMount() {
         // insert new game record
         this.props.startGame()
 
         // Block when player try to leave the page. It will be considered as give up
-        this.blockPlayer = this.props.history.block(targetLocation => {
-            // console.log(targetLocation,'targetLocation')
-            // this.props.history.push(`${targetLocation.pathname}`)
-            this.props.showModal({ title: `Give Up`, message: 'Are you sure you want to leave the game? This will be considered as give up', type: 'giveup' })
-            this.setState({ confirmLeave: true })
-            return this.state.confirmLeave
-       });
+        // this.blockPlayer = this.props.history.block(targetLocation => {
+        //     // console.log(targetLocation,'targetLocation')
+        //     // this.props.history.push(`${targetLocation.pathname}`)
+        //     this.props.showModal({ title: `Give Up`, message: 'Are you sure you want to leave the game? This will be considered as give up', type: 'giveup' })
+        //     this.setState({ confirmLeave: true })
+        //     return this.state.confirmLeave
+        // });
+
+        // Let's set the timer
+        this.setState({ seconds: this.props.gameTime })
+
+        // Begin countdown
+        this.countDownTimer()
+    }
+
+    countDownTimer = () => {
+        this.countDownTimerInterval = setInterval(() => {
+            const { seconds } = this.state
+            
+            if (seconds > 0) {
+                this.setState(({ seconds }) => ({
+                    seconds: seconds - 1
+                }))
+            }
+
+            if (seconds === 0) {
+                clearInterval(this.countDownTimerInterval)
+
+                const pHealth = this.props.player
+                const oHealth = this.props.opponent
+
+                if(pHealth.playerHealth > oHealth.opponentHealth) {
+                    this.playerWin(pHealth)
+                } else {
+                    this.opponentWin(oHealth)
+                }
+            } 
+        }, 1000)
     }
 
     componentWillUnmount() {
         this.closeModal()
-        this.blockPlayer()
+        // this.blockPlayer()
+        clearInterval(this.countDownTimerInterval)
+        clearInterval(this.countDownTimer)
     }
 
     /**
@@ -86,16 +128,16 @@ class Game extends React.PureComponent {
      * @param {Object} player 
      * @param {Object} opponent 
      */
-    attack = (player, opponent) => {               
+    attack = (player, opponent) => {
+        // Hit will range about 1-10
         const attackHit = randomNum(0,9)
 
         // Get covid monster health subtract to hit
         const opponentDamagedHealth = opponent.opponentHealth - attackHit
         
         if(opponentDamagedHealth < 0 || opponentDamagedHealth === 0) {
-            // Let's set play won the game
-            this.props.actionSetWinner('player')
-            this.props.showModal({ title: `${player.playerName} won!`, message: 'Yay you beat the covid monster! Congrats. Play again?', type: 'endgame'})
+            // Player won the game
+            this.playerWin(player)
 
             // Save details later for game history
         } else {
@@ -112,7 +154,7 @@ class Game extends React.PureComponent {
      * @param {Object} opponent 
      */
     blast = (player, opponent) => {
-        // const { opponent } = this.props
+        // Hit will range about 10-20
         const powerAttack = randomNum(9,19)
         
         // Get covid monster health subtract to hit
@@ -120,12 +162,11 @@ class Game extends React.PureComponent {
         
         if(opponentDamagedHealth < 0 || opponentDamagedHealth === 0) {
             // Let's set play won the game
-            this.props.actionSetWinner('player')
-            this.props.showModal({ title: `${player.playerName} won!`, message: 'Yay you beat the covid monster! Congrats. Play again?', type: 'endgame'})
+            this.playerWin(player)
 
             // Save details later for game history
         } else {
-            this.props.actionAttack(opponentDamagedHealth,`${player.playerName} Attack the ${opponent.opponentName} by ${powerAttack}`,'player')
+            this.props.actionAttack(opponentDamagedHealth,`${player.playerName} used power attack to ${opponent.opponentName} by ${powerAttack}`,'player')
         }
 
         // Monster turn to attack
@@ -156,7 +197,7 @@ class Game extends React.PureComponent {
      * @param {Object} player: player records
      */
     opponentAttack = (type,health,player) => {
-        const { isGameStarted } = this.props
+        const { isGameStarted, opponent } = this.props
 
         // If the player doing "heal"
         // lets get the updated health of the player
@@ -169,9 +210,8 @@ class Game extends React.PureComponent {
 
         if(playerDamagedHealth < 0 || playerDamagedHealth === 0) {
             // Let's set covid monster won the game
-            this.props.actionSetWinner('opponent')
-            this.props.showModal({ title: `Covid Monster won!`, message: 'Yay Covid Monster beat you! Sad. Play again?', type: 'endgame' })
-
+            this.opponentWin(opponent)
+            
             // Save details later for game history
         } else if(isGameStarted) {
             this.props.actionAttack(playerDamagedHealth,`Covid Monster Attack ${player.playerName} by ${attackHit}`,'opponent')
@@ -180,27 +220,76 @@ class Game extends React.PureComponent {
 
     giveUp = () => {
         this.setState({ confirmLeave: true })
+        clearInterval(this.countDownTimerInterval)
         this.props.showModal({ title: `Give Up`, message: 'Are you sure you want to surrender to the Covid Monster?', type: 'giveup' })
     }
 
     confirmGiveUp = () => {
-        this.props.playerGive()
+        // Save details later for game history
+        const data = {
+            status: 'Give Up',
+            time: this.state.seconds,
+            player: 0,
+            opponent: 0
+        }
+        this.props.saveGame(data,this.props.token)
+        this.props.playerGiveUp()
         this.closeModal()
         this.props.history.push('/')       
-        // Save details later for game history
+        
     }
 
-    closeModal = () => this.props.hideModal()
+    closeModal = () => {
+        this.props.hideModal()
+        clearInterval(this.countDownTimerInterval)
+        this.countDownTimer()
+    }
 
     playAgain = () => {
         this.props.startGame()
         this.closeModal()
+        this.setState({ seconds: this.props.gameTime })
+        clearInterval(this.countDownTimerInterval)
+        this.countDownTimer()
     }
 
     leaveTheGame = () => {
         this.closeModal()
         this.props.history.push('/')
+        this.props.resetGame()
         this.setState({ confirmLeave: true })
+    }
+
+    playerWin = (player) => {
+        // Lets save for game history
+        const data = {
+            status: 'Won',
+            time: this.state.seconds,
+            player: player.playerHealth,
+            opponent: 0
+        }
+        this.props.saveGame(data,this.props.token)
+        
+        this.props.actionSetWinner('player')
+        this.props.showModal({ title: `${player.playerName} win!`, message: 'Would you like to play again?', type: 'endgame'})
+
+        clearInterval(this.countDownTimerInterval)
+    }
+
+    opponentWin = (opponent) => {
+        // Lets save for game history        
+        const data = {
+            status: 'Defeated',
+            time: this.state.seconds,
+            player: 0,
+            opponent: opponent.opponentHealth
+        }
+        this.props.saveGame(data,this.props.token)
+
+        this.props.actionSetWinner('opponent')
+        this.props.showModal({ title: `Covid Monster win!`, message: 'Covid Monster beat you! Play again?', type: 'endgame' })
+
+        clearInterval(this.countDownTimerInterval)
     }
 
     render() {
@@ -210,20 +299,31 @@ class Game extends React.PureComponent {
             opponent,
             logs
         } = this.props
+        const { seconds } = this.state
 
         return (
             <AuthorizedContainer>
                 <h2>In Game</h2>
+
+                <div className="row center timer">
+                    { seconds === 0
+                        ? <p>GAME END!</p>
+                        : <p>Time Remaining: <span>{seconds < 10 ? `0${seconds}` : seconds}</span></p>
+                    }
+                </div>
                 <Content>
+                    
                     <div className="row column game">
                         <div className="row space-between">
                             <Player 
                                 playerName={player.playerName}
-                                health={player.playerHealth} />
+                                health={player.playerHealth} 
+                                avatarImage={player.avatar} />
                             <span className='vs'>VS</span>
                             <Player 
                                 playerName={opponent.opponentName}
-                                health={opponent.opponentHealth} />
+                                health={opponent.opponentHealth} 
+                                avatarImage={opponent.avatar} />
                         </div>
                         <div className="row center column">
                             <h2>Game Actions</h2>
@@ -246,17 +346,8 @@ class Game extends React.PureComponent {
                             </div>
                         </div>
                     </div>
-                    <div className="commentary">
-                        <h3>Commentary</h3>
-                        <ul className="logger">
-                            {logs && 
-                            logs
-                            .map( (item,idx) => {
-                                return <li key={idx}><span>{item}</span></li>
-                            })} 
-                            {/* slice(0, 10) */}
-                        </ul>
-                    </div>
+                    {/* Commentary or action logs */}
+                    <Commentary logs={logs} />
                 </Content>
                 
                 {modalProps.type === 'endgame' &&
@@ -280,17 +371,21 @@ const mapStateToProps = state => ({
     player: state.game.player,
     opponent: state.game.opponent,
     logs: state.game.commentary,
-    playerWon: state.game.playerWon
+    playerWon: state.game.playerWon,
+    gameTime: state.game.gameTime,
+    token: state.auth.token
 })
 
 const mapDispatchToProps = dispatch => ({
-    playerGive: () => dispatch(playerGive()),
+    playerGiveUp: () => dispatch(playerGiveUp()),
     startGame: () => dispatch(startGame()),
     hideModal: () => dispatch(hideModal()),
+    resetGame: () => dispatch(resetGame()),
     actionAttack: (damage,message,attackTurn) => dispatch(actionAttack(damage,message,attackTurn)),
     actionHeal: (health,message) => dispatch(actionHeal(health,message)),
     actionSetWinner: (type) => dispatch(actionSetWinner(type)),
-    showModal: (modalProps) => dispatch(showModal(modalProps))
+    showModal: (modalProps) => dispatch(showModal(modalProps)),
+    saveGame: (data,token) => dispatch(saveGame(data,token))
 })
 
 export default withRouter(connect(mapStateToProps,mapDispatchToProps)(Game))

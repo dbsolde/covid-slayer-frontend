@@ -9,6 +9,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 React JS (CRA)
 Redux
 Redux Thunk
+Redux Persist
 Custom css and designed components using styled-components
 Axios
 ```
@@ -51,4 +52,10 @@ $ npm start
 # To test
 $ npm test
 
+```
+
+## TODO
+```bash
+Unit Test
+Dockerized game
 ```

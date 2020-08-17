@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom';
 
 
 const UnauthorizedContainerWrapper = styled.div`
@@ -25,6 +27,14 @@ const Container = styled.div`
 `
 
 class UnauthorizedContainer extends React.PureComponent {
+
+    componentDidMount() {
+        // If user still authenticated redirect to home page
+        if(this.props.isAuthenticated && this.props.rememberuser) {
+            this.props.history.push(`/`)
+        }
+    }
+
     render() {
         return (
             <UnauthorizedContainerWrapper>
@@ -37,4 +47,9 @@ class UnauthorizedContainer extends React.PureComponent {
     }
 }
 
-export default UnauthorizedContainer
+const mapStateToProps = state => ({
+    isAuthenticated: state.auth.isAuthenticated,
+    rememberuser: state.auth.rememberuser
+})
+
+export default withRouter(connect(mapStateToProps)(UnauthorizedContainer))

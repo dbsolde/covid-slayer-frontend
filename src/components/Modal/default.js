@@ -6,7 +6,7 @@ const Default = React.memo(({props}) => {
         <React.Fragment>
             <div className='modal-header default'>
                 <h5 className="modal-title">{props.modalProps.title}</h5>
-                {!props.autoClose &&
+                {!props.autoClose && props.onConfirm &&
                     <span className="close default" aria-label="Close" onClick={props.onClose}>
                         &times;
                     </span>

@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux'
+import { logout } from '../../actions/user'
 
 const HeaderWrapper = styled.div`
     max-width: 1140px;
@@ -39,7 +41,7 @@ const Nav = styled.ul`
     }
 `
 
-const Header = () => {
+const Header = (props) => {
     return (
         <HeaderWrapper>
             <div className="brand">
@@ -54,11 +56,15 @@ const Header = () => {
                     <Link to="/game-history">Game History</Link>
                 </li>
                 <li>
-                    <Link to="/logout">Logout</Link>
+                    <Link to="/logout" onClick={() => props.logout()}>Logout</Link>
                 </li>
             </Nav>
         </HeaderWrapper>
     )
 }
 
-export default Header;
+const mapDispatchToProps = dispatch => ({
+    logout: () => dispatch(logout())
+})
+
+export default connect(null,mapDispatchToProps)(Header)

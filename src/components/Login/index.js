@@ -53,7 +53,7 @@ class Login extends React.Component {
 
     handleLogin = e => {
         e.preventDefault();
-        const { email, password } = this.state
+        const { email, password, remember } = this.state
 
         this.setState({ isSubmitted: true })
         
@@ -61,7 +61,7 @@ class Login extends React.Component {
         if (!inputValidator('email',email) && !inputValidator('Password',password)) {
             this.setState({ isSubmitted: false })
 
-            this.props.login(email,password)
+            this.props.login(email,password,remember)
         }
     }
 
@@ -113,7 +113,7 @@ class Login extends React.Component {
                         {auth.error && <p className="error-message">{auth.message}</p>}
 
                         <InputGroup className="align-right">
-                            <Button btnStyle="primary" disabled={false}>Login</Button>
+                            <Button btnStyle="primary" disabled={auth.loading}>Login</Button>
                         </InputGroup>
                     </form>
                 </div>
@@ -127,7 +127,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-    login: (email,password) => dispatch(userAuth(email,password))
+    login: (email,password,remember) => dispatch(userAuth(email,password,remember))
 })
 
 export default withRouter(connect(mapStateToProps,mapDispatchToProps)(Login))

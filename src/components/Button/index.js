@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
 export const PrimaryButton = styled.button`
-    padding: .75rem 2rem;
+    padding: .88rem 2rem;
     border: 0;
     border-radius: 0.188em;
     cursor: pointer;
@@ -57,6 +57,8 @@ export const PrimaryButton = styled.button`
     }
     :disabled {
         pointers-event: none;
+        cursor: not-allowed;
+        opacity: .5;
     }
 `
 

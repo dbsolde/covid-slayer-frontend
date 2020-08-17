@@ -28,12 +28,9 @@ export const actionHeal = (heal,message) => {
     }
 }
 
-export const playerGive = () => {
+export const playerGiveUp = () => {
     return dispatch => {
         dispatch({ type: 'PLAYER_GIVE_UP' })
-
-        // Let's open the modal if player surrender
-        // dispatch({ type: 'SHOW_MODAL', payload: { title: 'Give Up', message: 'You Weak! Disgusting!', save: true } })
     }
 }
 
@@ -43,15 +40,39 @@ export const actionSetWinner = (type) => {
     }
 }
 
-export const getHistories = (type) => {
+export const setGameTime = (time) => {
+    return dispatch => {
+        dispatch({ type: 'SET_GAME_TIME', payload: { time }})
+    }
+}
+
+export const resetGame = () => {
+    return dispatch => {
+        dispatch({ type: 'RESET_GAME' })
+    }
+}
+
+export const getHistories = (page,perPage,token) => {
     return async dispatch => {
-        await api.get('/game/histories')
+        dispatch({ type: 'GET_GAME_HISTORY' })
+        await api.Games.getHistories(page,perPage,token)
         .then(result => {
-            // console.log(result.data,'res')
-            dispatch({ type: 'GET_GAME_HISTORY_SUCCESS', payload: result.data.histories})
+            dispatch({ type: 'GET_GAME_HISTORY_SUCCESS', payload: result.data})
         })
         .catch(err => {
             dispatch({ type: 'GET_GAME_HISTORY_FAILED', payload: err })
+        })
+    }
+}
+
+export const saveGame = (data,token) => {
+    return async dispatch => {
+        await api.Games.addGameHistory(data, token)
+        .then(result => {
+            dispatch({ type: 'ADD_GAME_HISTORY_SUCCESS' })
+        })
+        .catch(err => {
+            dispatch({ type: 'ADD_GAME_HISTORY_FAILED', payload: err })
         })
     }
 }

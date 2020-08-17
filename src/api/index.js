@@ -1,31 +1,82 @@
 import axios from 'axios'
-import { getLocalStorage, removeLocalStorage } from '../utils/localStorage'
+import { removeLocalStorage } from '../utils/localStorage'
 
 // localhost:5000/game/histories
-const API_ROOT = 'http://localhost:3001'
+const API_ROOT = process.env.REACT_APP_ENVIRONMENT
+// 'https://covid-slayer-api.herokuapp.com'
 
-let api = axios.create({
-    baseURL: API_ROOT,
-    responseType: 'json',
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${getLocalStorage('token')}`
+const createAPI = (token,type) => {
+    let headers
+
+    // Form data if upload action :/
+    if(type === 'upload') {
+        headers = {
+            'Content-Type': 'multipart/form-data'
+        }
+    } else {
+    // else let's use application json
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        }
     }
-})
+    
+    let api = axios.create({
+        baseURL: API_ROOT,
+        responseType: 'json',
+        headers
+    })
+    
+    api.interceptors.response.use(function (response) {
+        return response
+    }, function (error) {
+        const { status } = error.response
+        // if user current page is login and register
+        // let's not validate
+        if(window.location.pathname !== "/login" && (status === 401 || status === 403)) {
+            // remove localstorage
+            removeLocalStorage('persist:covidslayer')
 
-api.interceptors.response.use(function (response) {
-    return response
-}, function (error) {
-    const { status, data } = error.response
-    // if(window.location !== "/login" && (status === 401 || status === 403)) {
-    //     // redirect to login page
-    //     window.location.href = `/login`
-    //     console.log(status,data,window.location,'dasda')
-    //     removeLocalStorage('token')
-    //     removeLocalStorage('isAuthenticated')
-    // }      		
-    return Promise.reject(error)
-})
+            // redirect to login page
+            window.location.href = `/login`
+        }      		
+        return Promise.reject(error)
+    })
+
+    return api
+}
+
+const requests = {
+    get: (url,token) =>
+        createAPI(token)
+        .get(url, token),
+    post: (url,data,token,type) =>
+        createAPI(token,type)
+        .post(url, data)
+}
+
+const Auth = {
+    login: (data) =>
+        requests.post('/user/login', data),
+    register: (data) => 
+        requests.post('/user/register', data, '','upload')
+}
+
+const Games = {
+    getHistories: (page,perPage,token) =>
+        requests.get(`/game/histories/${page}/${perPage}`, token),
+    addGameHistory: (data,token) =>
+        requests.post('/game/createhistory', data, token)
+}
+
+const User = {
+    getUser: (id,token) =>
+        requests.get(`/user/${id}`, token)
+}
 
 
-export default api
+export default {
+    Auth,
+    Games,
+    User
+}

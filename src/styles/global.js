@@ -45,6 +45,7 @@ export default createGlobalStyle`
         &.center {
             justify-content: center;
             text-align: center;
+            align-items: flex-end;
         }
         &.space-between {
             justify-content: space-between;
@@ -59,14 +60,28 @@ export default createGlobalStyle`
             text-align: center;
             font-weight: 700;
         }
+        &.timer {
+            margin-bottom: 0px;
+            span {
+                font-weight: 700;
+                color: ${props => props.theme.colors.error};
+            }
+        }
     }
     .column {
         flex-direction: column !important;
     }
     p.error-message {
         margin: 0 0 10px;
-        background: ${props => props.theme.colors.alert.background};
-        color: ${props => props.theme.colors.alert.color};
+        background: ${props => props.theme.colors.alertError.background};
+        color: ${props => props.theme.colors.alertError.color};
+        border-radius: 3px;
+        padding: 10px;
+    }
+    .success-message {
+        margin: 0 0 10px;
+        background: ${props => props.theme.colors.alertSuccess.background};
+        color: ${props => props.theme.colors.alertSuccess.color};
         border-radius: 3px;
         padding: 10px;
     }

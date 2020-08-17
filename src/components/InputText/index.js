@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 const InputWrapper = styled.div`
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     label {
         text-transform: uppercase;
         font-weight: 500;
@@ -14,6 +15,7 @@ const InputWrapper = styled.div`
         border: 0.063em solid ${props => props.theme.colors.input.border};
         color: ${props => props.theme.colors.input.color};
         border-radius: 0.125em;
+        width: 100%;
         &:focus {
             outline:0; 
         }
@@ -45,9 +47,9 @@ const InputText = props => {
 }
 
 InputText.propTypes = {
-    type: PropTypes.oneOf(['email', 'number', 'password', 'text']).isRequired,
+    type: PropTypes.oneOf(['email', 'number', 'password', 'text', 'file']).isRequired,
     name: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     handleChange: PropTypes.func.isRequired,
     placeholder: PropTypes.string,
     label: PropTypes.string,

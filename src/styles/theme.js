@@ -32,9 +32,13 @@ const colors = {
     table: {
         headBg: '#2c3e50',
     },
-    alert: {
+    alertError: {
         background: '#f8d7da',
         color: '#721c24'
+    },
+    alertSuccess: {
+        background: '#d4edda',
+        color: '#155724'
     },
     headerBG: '#2c3e50',
     playerHealthBar: '',

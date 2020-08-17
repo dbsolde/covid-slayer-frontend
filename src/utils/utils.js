@@ -3,6 +3,7 @@ export const inputValidator = (field, input) => {
     let result = ''
     switch (field) {
         case 'Name':
+        case 'File':
         case 'Password':
             if(!input) {
                 result = `${field} is required.`

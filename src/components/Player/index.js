@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components'
+import Avatar from '../Avatar'
 
 const PlayerWrapper = styled.div`
     display: flex;
@@ -8,8 +9,18 @@ const PlayerWrapper = styled.div`
     flex-direction: column;
     width: 49%;
     padding: 10px;
-    .player-name {
-        font-size: 1.500em;
+    .player {
+        display: flex;
+        align-items: center;
+        img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+        }
+        .player-name {
+            font-size: 1.500em;
+            margin-left: 10px;
+        }
     }
 `
 const HealthBarWrapper = styled.div`
@@ -44,12 +55,16 @@ class Player extends React.PureComponent {
     render() {
         const {
             playerName,
-            health
+            health,
+            avatarImage
         } = this.props
 
         return (
             <PlayerWrapper>
-                <span className="player-name">{playerName}</span>
+                <div className="player">
+                    <Avatar accountType={playerName} avatar={avatarImage} />
+                    <span className="player-name">{playerName}</span>
+                </div>
                 <HealthBarWrapper>
                     <HealthBar health={Number(health)}>
                         <span>{health}%</span>

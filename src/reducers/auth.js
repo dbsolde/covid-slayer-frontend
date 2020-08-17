@@ -1,8 +1,7 @@
-import { getLocalStorage } from '../utils/localStorage'
 
 const initialState = {
-    isAuthenticated: getLocalStorage('isAuthenticated') ? getLocalStorage('isAuthenticated') : false,
-    token: getLocalStorage('token') ? getLocalStorage('token') : ''
+    isAuthenticated: false,
+    rememberuser: false
 }
 
 const authReducer = (state = initialState, action) => {
@@ -11,7 +10,8 @@ const authReducer = (state = initialState, action) => {
             return {
                 ...state,
                 error: false,
-                loading: true
+                loading: true,
+                rememberuser: action.payload
             }
         case 'LOGIN_FAILED':
             return {
@@ -26,7 +26,8 @@ const authReducer = (state = initialState, action) => {
                 error: false,
                 loading: false,
                 isAuthenticated: true,
-                ...action.payload
+                userId: action.payload.userId,
+                token: action.payload.token
             }
         default: 
             return state

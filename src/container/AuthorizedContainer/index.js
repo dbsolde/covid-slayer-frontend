@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import Header from '../../components/Header'
-
+import { getUser } from '../../actions/user'
 
 const AuthorizedContainerWrapper = styled.div`
     color: ${props => props.theme.colors.black};
@@ -31,6 +31,9 @@ const InnerWrapper = styled.div`
 class AuthorizedContainer extends React.PureComponent {
 
     componentDidMount() {
+        // Let's get the user details and this will also check if player still authenticated
+        this.props.getUser(this.props.userId,this.props.token)
+
         // if user is not authenticated redirect to login
         if(!this.props.isAuthenticated)
             this.props.history.push(`/login`)
@@ -51,7 +54,13 @@ class AuthorizedContainer extends React.PureComponent {
 }
 
 const mapStateToProps = state => ({
-    isAuthenticated: state.auth.isAuthenticated
+    isAuthenticated: state.auth.isAuthenticated,
+    userId: state.auth.userId,
+    token: state.auth.token
 })
 
-export default withRouter(connect(mapStateToProps)(AuthorizedContainer));
+const mapDispatchToProps = dispatch => ({
+    getUser: (id,token) => dispatch(getUser(id,token))
+})
+
+export default withRouter(connect(mapStateToProps,mapDispatchToProps)(AuthorizedContainer));

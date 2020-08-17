@@ -26,27 +26,42 @@ class Register extends React.PureComponent {
         name: '',
         email: '',
         password: '',
-        avatar: ''
+        avatarImage: ''
     }
 
     handleChange = e => {
-        this.setState({
-            [e.target.name]: e.target.value
-        })
+        if(e.target.name === 'avatarImage') {
+            this.setState({ avatarImage: e.target.files[0] }); 
+        } else {
+            this.setState({
+                [e.target.name]: e.target.value
+            })
+        }
     }
 
     handleRegistration = e => {
         e.preventDefault();
-        const { name, email, password } = this.state
-        // avatar
-
-        this.setState({ isSubmitted: true })
+        const { name, email, password, avatarImage } = this.state
         
+        this.setState({ isSubmitted: true })        
+
         // Let's validate fields
-        if (!inputValidator('Name',name) && !inputValidator('email',email) && !inputValidator('Password',password)) {
-            this.setState({ isSubmitted: false })            
-            console.log(email, password,'checked!')
-            this.props.registerUser({ name, email, password })
+        if (!inputValidator('Name',name) && !inputValidator('email',email) && !inputValidator('Password',password) && !inputValidator('File',avatarImage)) {
+            this.setState({ isSubmitted: false })
+
+            this.props.registerUser({ name, email, password, avatarImage })
+        }
+    }
+
+    componentDidUpdate(nextprops) {
+        console.log(nextprops.user.success,this.props.user.succes)
+        if(this.props.user.success !== nextprops.user.success && this.props.user.succes) {
+            this.setState({
+                name: '',
+                email: '',
+                password: '',
+                avatarImage: ''
+            })
         }
     }
 
@@ -55,7 +70,7 @@ class Register extends React.PureComponent {
             name,
             email,
             password,
-            // avatar,
+            avatarImage,
             isSubmitted
         } = this.state
         const { user } = this.props
@@ -70,7 +85,7 @@ class Register extends React.PureComponent {
                                 type="text"
                                 name="name"
                                 label="Full Name"
-                                placeholder="Juan Dela Cruz"
+                                placeholder="First Name"
                                 value={name}
                                 errorMessage={isSubmitted ? inputValidator('Name',name) : ''}
                                 handleChange={(e) => this.handleChange(e)} />
@@ -96,10 +111,20 @@ class Register extends React.PureComponent {
                                 handleChange={(e) => this.handleChange(e)} />
                         </InputGroup>
 
+                        <InputGroup>
+                            <InputText 
+                                type="file"
+                                name="avatarImage"
+                                label="Avatar"
+                                errorMessage={isSubmitted ? inputValidator('File',avatarImage) : ''}
+                                handleChange={(e) => this.handleChange(e)} />
+                        </InputGroup>
+
                         {user.error && <p className="error-message">{user.message}</p>}
+                        {user.success && <p className="success-message">{user.message}</p>}
 
                         <InputGroup className="align-right">
-                            <Button btnStyle="success" disabled={false}>Create Account</Button>
+                            <Button btnStyle="success" disabled={user.registrationLoading}>Create Account</Button>
                         </InputGroup>
                         <InputGroup >
                             <span>

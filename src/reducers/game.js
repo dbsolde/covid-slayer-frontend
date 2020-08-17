@@ -3,32 +3,56 @@ const initialState = {
     gameTime: 60, // Game time 60secs by default
     opponent: {
         opponentHealth: 100,
-        opponentName: 'Covid Monster'
+        opponentName: 'Covid Monster',
+        avatar: '/static/media/monster.7907a800.jpg'
     }, // Opponent default health and name
     player: {
         playerHealth: 100,
-        playerName: 'Dennis'
+        playerName: '',
+        avatar: ''
     }, // Player default health and name
     isGameStarted: false, 
     commentary: [], // Actions logs
     playerGiveUp: false,
     winner: '',
     isPlayerWon: false,
-    isOpponentWon: false,
-    actions: {
-        playerAttack: false,
-        playerBlast: false,
-        playerHeal: false,
-        playerGiveUp: false
-    }
+    isOpponentWon: false
 }
 
 const gameReducer = (state = initialState, action) => {
     switch(action.type) {
+        // lets save player needed details on success
+        case 'GET_USER_SUCCESS':
+            return {
+                ...state,
+                player: {
+                    ...state.player,
+                    playerName: action.payload.user.name,
+                    avatar: `https://covid-slayer-api.herokuapp.com/uploads/${action.payload.user.avatarImage}`
+                }
+            }
         case 'START_GAME':
             return {
-                ...initialState,
+                ...state,
                 isGameStarted: true,
+                gameTime: state.gameTime,
+                player: {
+                    ...state.player,
+                    playerHealth: 100
+                },
+                playerGiveUp: false,
+                winner: '',
+                isPlayerWon: false,
+                isOpponentWon: false
+            }
+        case 'RESET_GAME':
+            return {
+                ...initialState
+            }
+        case 'SET_GAME_TIME':
+            return {
+                ...state,
+                gameTime: action.payload.time
             }
         case 'PLAYER_ATTACKED':
             return {
