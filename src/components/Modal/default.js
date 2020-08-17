@@ -6,19 +6,14 @@ const Default = React.memo(({props}) => {
         <React.Fragment>
             <div className='modal-header default'>
                 <h5 className="modal-title">{props.modalProps.title}</h5>
-                {!props.autoClose && props.onConfirm &&
-                    <span className="close default" aria-label="Close" onClick={props.onClose}>
-                        &times;
-                    </span>
-                }
             </div>
 
             <div className="modal-body default">
                 {props.children}
             </div>
             <div className="modal-footer">
-            {props.onConfirm ? <Button btnStyle="success" handleClick={props.onConfirm}>Yes</Button> : null }            
-            {props.onLeave ? <Button btnStyle="success" handleClick={props.onLeave}>No</Button> : null }
+            {props.onConfirm ? <Button btnStyle="success" handleClick={props.onConfirm}>{props.giveup ? 'Ok' : 'Yes'}</Button> : null }            
+            {props.onLeave ? <Button btnStyle="success" handleClick={props.onLeave}>{props.newgame ? 'Ok' : 'No'}</Button> : null }
             </div> 
         </React.Fragment>
     )

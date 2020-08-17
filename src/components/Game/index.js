@@ -107,7 +107,10 @@ class Game extends React.PureComponent {
                 const pHealth = this.props.player
                 const oHealth = this.props.opponent
 
-                if(pHealth.playerHealth > oHealth.opponentHealth) {
+                if(pHealth.playerHealth === 100 && oHealth.opponentHealth === 100) {
+                    // If player reached to time limit and nothing is happening will force to start new game
+                    this.playeGame()
+                } else if(pHealth.playerHealth > oHealth.opponentHealth) {
                     this.playerWin(pHealth)
                 } else {
                     this.opponentWin(oHealth)
@@ -221,7 +224,7 @@ class Game extends React.PureComponent {
     giveUp = () => {
         this.setState({ confirmLeave: true })
         clearInterval(this.countDownTimerInterval)
-        this.props.showModal({ title: `Give Up`, message: 'Are you sure you want to surrender to the Covid Monster?', type: 'giveup' })
+        this.props.showModal({ title: `Give Up`, message: 'Covid Monster win!', type: 'giveup' })
     }
 
     confirmGiveUp = () => {
@@ -287,9 +290,17 @@ class Game extends React.PureComponent {
         this.props.saveGame(data,this.props.token)
 
         this.props.actionSetWinner('opponent')
-        this.props.showModal({ title: `Covid Monster win!`, message: 'Covid Monster beat you! Play again?', type: 'endgame' })
+        this.props.showModal({ title: `Covid Monster win!`, message: 'Would you like to play again?', type: 'endgame' })
 
         clearInterval(this.countDownTimerInterval)
+    }
+
+    playeGame = () => {
+        this.props.showModal({ 
+            title: `No action recorded`, 
+            message: 'Game is ended. Please start new game.', 
+            type: 'newgame' 
+        })
     }
 
     render() {
@@ -356,7 +367,12 @@ class Game extends React.PureComponent {
                     </Modal>
                 }
                 {modalProps.type === 'giveup' &&
-                    <Modal onClose={this.closeModal} onConfirm={this.confirmGiveUp} >
+                    <Modal onClose={this.closeModal} giveup onConfirm={this.confirmGiveUp} >
+                        <p>{modalProps.message}</p>
+                    </Modal>
+                }
+                {modalProps.type === 'newgame' &&
+                    <Modal onClose={this.closeModal} newgame onLeave={this.leaveTheGame}>
                         <p>{modalProps.message}</p>
                     </Modal>
                 }

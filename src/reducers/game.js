@@ -41,10 +41,15 @@ const gameReducer = (state = initialState, action) => {
                     ...state.player,
                     playerHealth: 100
                 },
+                opponent: {
+                    ...state.opponent,
+                    opponentHealth: 100
+                },
                 playerGiveUp: false,
                 winner: '',
                 isPlayerWon: false,
-                isOpponentWon: false
+                isOpponentWon: false,
+                commentary: []
             }
         case 'RESET_GAME':
             return {

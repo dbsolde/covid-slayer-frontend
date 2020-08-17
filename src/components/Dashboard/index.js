@@ -46,9 +46,12 @@ class Dashboard extends React.PureComponent {
     }
 
     startGame = () => {
-        this.props.setGameTime(this.state.gameTime)
-        // redirect to game
-        this.props.history.push('/game')
+        const { gameTime } = this.state        
+        // Let's Filter then redirect to game
+        if(Number(gameTime) !== 0 || !gameTime) {
+            this.props.setGameTime(gameTime)
+            this.props.history.push('/game')
+        }
     }
 
 
@@ -85,8 +88,7 @@ class Dashboard extends React.PureComponent {
                         <Button 
                             btnStyle="primary" 
                             handleClick={this.startGame}
-                            disabled={user.userLoading}>Start Game</Button>
-                        {/* <Link to="/game">Start Game</Link> */}
+                            disabled={user.userLoading || Number(gameTime) === 0}>Start Game</Button>
                     </LinkBtn>
                 </Content>
             </AuthorizedContainer>
