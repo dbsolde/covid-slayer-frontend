@@ -66,7 +66,8 @@ class Game extends React.PureComponent {
 
         this.state = {
             confirmLeave: false,
-            seconds: 0
+            seconds: 0,
+            isOnAttack: false
         }
     }
     
@@ -134,7 +135,7 @@ class Game extends React.PureComponent {
     attack = (player, opponent) => {
         // Hit will range about 1-10
         const attackHit = randomNum(0,9)
-
+        this.setState({ isOnAttack: true })
         // Get covid monster health subtract to hit
         const opponentDamagedHealth = opponent.opponentHealth - attackHit
         
@@ -159,7 +160,7 @@ class Game extends React.PureComponent {
     blast = (player, opponent) => {
         // Hit will range about 10-20
         const powerAttack = randomNum(9,19)
-        
+        this.setState({ isOnAttack: true })
         // Get covid monster health subtract to hit
         const opponentDamagedHealth = opponent.opponentHealth - powerAttack
         
@@ -182,7 +183,7 @@ class Game extends React.PureComponent {
      */
     heal = (player) => {
         const healPlayer = randomNum(0,9)
-
+        this.setState({ isOnAttack: true })
         // Heal the player's health
         const playerHealHealth = player.playerHealth + healPlayer
 
@@ -219,6 +220,11 @@ class Game extends React.PureComponent {
         } else if(isGameStarted) {
             this.props.actionAttack(playerDamagedHealth,`Covid Monster Attack ${player.playerName} by ${attackHit}`,'opponent')
         }
+        
+        // Let's add a delay on each attack
+        setTimeout( () => {
+            this.setState({ isOnAttack: false })
+        },500)
     }
 
     giveUp = () => {
@@ -310,7 +316,7 @@ class Game extends React.PureComponent {
             opponent,
             logs
         } = this.props
-        const { seconds } = this.state
+        const { seconds, isOnAttack } = this.state
 
         return (
             <AuthorizedContainer>
@@ -342,15 +348,17 @@ class Game extends React.PureComponent {
                                 {/* Normal attack */}
                                 <Button 
                                     btnStyle="primary" 
-                                    handleClick={() => this.attack(player,opponent)}>ATTACK</Button>
+                                    handleClick={() => this.attack(player,opponent)}
+                                    disabled={isOnAttack}>ATTACK</Button>
                                 {/* Special attack */}
                                 <Button 
                                     btnStyle="warning" 
-                                    handleClick={() => this.blast(player,opponent)}>BLAST</Button>
+                                    handleClick={() => this.blast(player,opponent)}
+                                    disabled={isOnAttack}>BLAST</Button>
                                 {/* Disabled if player and opponent still has perfect health */}
                                 <Button 
                                     btnStyle="success" 
-                                    disabled={player.playerHealth === 100 && opponent.opponentHealth === 100} 
+                                    disabled={(player.playerHealth === 100 && opponent.opponentHealth === 100 )|| isOnAttack} 
                                     handleClick={() => this.heal(player)}>HEAL</Button>
                                 {/* Give up */}
                                 <Button btnStyle="danger" handleClick={this.giveUp}>GIVE UP</Button>
